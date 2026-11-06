@@ -1,0 +1,32 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='desert'>
+    <static>true</static>
+    <link name='link'>
+      <visual name='visual'>
+        <geometry>
+          <mesh>
+            <uri>/workspace/desert_environment/DesertGZ2.obj</uri>
+            <scale>10 10 10</scale>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <mesh>
+            <uri>/workspace/desert_environment/DesertGZ2.obj</uri>
+            <scale>10 10 10</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <light name='sun' type='directional'>
+        <pose>0 0 100 0 0 0</pose>
+        <cast_shadows>true</cast_shadows>
+        <diffuse>1 0.95 0.85 1</diffuse>
+        <specular>0.3 0.3 0.3 1</specular>
+        <direction>-0.5 0.2 -0.9</direction>
+      </light>
+    </link>
+  </model>
+</sdf>
