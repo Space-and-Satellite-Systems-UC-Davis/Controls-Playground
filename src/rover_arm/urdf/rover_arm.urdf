@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<robot name="simple_arm">
+
+  <!-- ================= BASE ================= -->
+<!-- ================= BASE CENTER ================= -->
+<link name="base_center"/>
+<!-- ================= LEFT BASE ================= -->
+<link name="base_plate_wall_left">
+
+  <inertial>
+    <mass value="0.719763"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <inertia ixx="0.00112313" ixy="5.68973e-06" ixz="6.66299e-05"
+             iyy="0.00312909" iyz="0.000131819" izz="0.00213288"/>
+  </inertial>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://arm_assembly/meshes/Base Plate Wall Left.stl" scale="1 1 1"/>
+    </geometry>
+    <material name="gray">
+      <color rgba="0.639216 0.654902 0.662745 1"/>
+    </material>
+  </visual>
+
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://arm_assembly/meshes/Base Plate Wall Left.stl" scale="1 1 1"/>
+    </geometry>
+  </collision>
+
+</link>
+
+<!-- ================= RIGHT BASE ================= -->
+<link name="base_plate_wall_right">
+
+  <inertial>
+    <mass value="0.692201"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <inertia ixx="0.00103589" ixy="-3.02278e-07" ixz="-2.04069e-05"
+             iyy="0.00309234" iyz="9.57846e-05" izz="0.00214162"/>
+  </inertial>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://arm_assembly/meshes/Base Plate Wall Right.stl" scale="1 1 1"/>
+    </geometry>
+    <material name="gray">
+      <color rgba="0.639216 0.654902 0.662745 1"/>
+    </material>
+  </visual>
+
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://arm_assembly/meshes/Base Plate Wall Right.stl" scale="1 1 1"/>
+    </geometry>
+  </collision>
+
+</link>
+
+<!-- ================= SYMMETRIC PLACEMENT ================= -->
+
+
+<!-- LEFT -->
+<joint name="base_left_joint" type="fixed">
+  <parent link="base_center"/>
+  <child link="base_plate_wall_left"/>
+  <origin xyz="0 0.1 0" rpy="0 0 0"/>
+</joint>
+
+<!-- RIGHT (mirrored + rotated) -->
+<joint name="base_right_joint" type="fixed">
+  <parent link="base_center"/>
+  <child link="base_plate_wall_right"/>
+  <origin xyz="0 -0.1 0" rpy="0 0 3.14159"/>
+</joint>
+
+  <!-- ================= world and Joint base movement================= -->
+
+<link name="world"/>
+
+<joint name="base_rotation" type="revolute">
+  <parent link="world"/>
+  <child link="base_center"/>
+
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+
+  <axis xyz="0 0 1"/>
+
+  <limit lower="-3.14159" upper="3.14159" effort="50" velocity="2"/>
+</joint>
+  <!-- ================= UPPER ARM ================= -->
+<link name="truss_right">
+    <inertial>
+        <mass value="0.355071" />
+        <origin xyz="-0.112971 -9.64101e-08 0.003996" rpy="0 -0 0" />
+        <inertia ixx="0.00032557" ixy="5.69405e-09" ixz="-4.80543e-08" iyy="0.00307457" iyz="1.36979e-13" izz="0.00339635" />
+     </inertial>
+     <visual>
+        <origin xyz="-0.23 -6.4294e-19 -0.008" rpy="0 -0 0" />
+        <geometry>
+            <mesh filename="package://arm_assembly/meshes/Truss Right.stl" scale="1 1 1" />
+        </geometry>
+        <material name="0.639216_0.654902_0.662745_0.000000_0.000000">
+            <texture />
+            <color rgba="0.639216 0.654902 0.662745 1" />
+        </material>
+    </visual>
+  <collision>
+    <origin xyz="-0.23 0 -0.007" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://arm_assembly/meshes/Truss Right.stl" scale="1 1 1" />
+    </geometry>
+  </collision>
+</link>
+
+
+<link name="truss_left">
+    <inertial>
+        <mass value="0.379638" />
+        <origin xyz="-0.11448 -5.18783e-18 0.00400374" rpy="0 -0 0" />
+        <inertia ixx="0.000330711" ixy="0" ixz="4.59102e-08" iyy="0.00312125" iyz="0" izz="0.00344792" />
+    </inertial>
+    <visual>
+        <origin xyz="-0.23 -6.4294e-19 0" rpy="0 -0 0" />
+        <geometry>
+           <mesh filename="package://arm_assembly/meshes/Truss Left.stl" scale="1 1 1" />
+        </geometry>
+        <material name="0.639216_0.654902_0.662745_0.000000_0.000000">
+             <texture />
+             <color rgba="0.639216 0.654902 0.662745 1" />
+        </material>
+    </visual>
+  <collision>
+    <origin xyz="-0.23 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://arm_assembly/meshes/Truss Left.stl" scale="1 1 1" />
+    </geometry>
+  </collision>
+</link>
+<link name="truss_group"/>
+
+  
+<joint name="left_truss_joint" type="fixed">
+  <parent link="truss_group"/>
+  <child link="truss_left"/>
+  <origin xyz="0.23 0 -0.07" rpy="0 0 0"/>
+</joint>
+
+<joint name="right_truss_joint" type="fixed">
+  <parent link="truss_group"/>
+  <child link="truss_right"/>
+  <origin xyz="0.23 0 0.07" rpy="0 0 0"/>
+</joint>
+
+  <!-- ================= SINGLE CONTROLLING JOINT ================= -->
+<joint name="truss_main_joint" type="revolute">
+  <parent link="base_center"/>   <!-- or your base link -->
+  <child link="truss_group"/>
+
+  <!-- hinge location -->
+  <origin xyz="0.065 0 0.03" rpy="1.5708 0 0"/>
+
+  <!-- up/down motion -->
+  <axis xyz="0 0 1"/>
+
+  <limit lower="-1.57" upper="3.14" effort="50" velocity="2"/>
+</joint>
+  <!-- ================= FOREARM ================= -->
+
+    <link name="left_elbow_truss">
+        <inertial>
+            <mass value="0.208436" />
+            <origin xyz="0 0 0" rpy="0 -0 0" />
+            <inertia ixx="0.00270966" ixy="8.09913e-08" ixz="-3.87317e-09" iyy="0.000126764" iyz="1.85517e-09" izz="0.00258414" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="package://arm_assembly/meshes/Left Elbow Truss.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.647059_0.647059_0.647059_0.000000_0.000000">
+                <texture />
+                <color rgba="0.647059 0.647059 0.647059 1" />
+            </material>
+        </visual>
+      <collision>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+         <geometry>
+           <mesh filename="package://arm_assembly/meshes/Left Elbow Truss.stl" scale="1 1 1" />
+         </geometry>
+      </collision>
+    </link>
+
+   <link name="right_elbow_truss">
+        <inertial>
+            <mass value="0.210163" />
+            <origin xyz="0.003 -0.136987 -0.00808521" rpy="0 -0 0" />
+            <inertia ixx="0.00273336" ixy="0" ixz="0" iyy="0.000127711" iyz="5.8663e-07" izz="0.00260691" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.006 -0.134 -0.008" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="package://arm_assembly/meshes/Right Elbow Truss.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.647059_0.647059_0.647059_0.000000_0.000000">
+                <texture />
+                <color rgba="0.647059 0.647059 0.647059 1" />
+            </material>
+        </visual>
+      <collision>
+          <origin xyz="-0.006 -0.127 -0.005" rpy="0 0 0"/>
+         <geometry>
+           <mesh filename="package://arm_assembly/meshes/Right Elbow Truss.stl" scale="1 1 1" />
+         </geometry>
+      </collision>
+    </link>
+  
+<link name="Elbowgroup"/>
+
+  
+<joint name="left_elbow" type="fixed">
+  <parent link="Elbowgroup"/>
+  <child link="left_elbow_truss"/>
+  <origin xyz="0.15 0.025 0" rpy="3.14159 0 1.5708 "/>
+</joint>
+
+<joint name="right_elbow" type="fixed">
+  <parent link="Elbowgroup"/>
+  <child link="right_elbow_truss"/>
+  <origin xyz="0.285 -0.078 -0.01" rpy="3.14159 0 1.5708 "/>
+</joint>
+
+  <!-- ================= SINGLE CONTROLLING JOINT ================= -->
+<joint name="truss_main_elbow" type="revolute">
+  <parent link="truss_group"/>   <!-- or your base link -->
+  <child link="Elbowgroup"/>
+
+  <!-- hinge location -->
+  <origin xyz="0.23 0 0.03" rpy="1.5708 0 0"/>
+
+  <!-- up/down motion -->
+  <axis xyz="0 1 0"/>
+
+  <limit lower="-3.14" upper="3.14" effort="50" velocity="2"/>
+</joint>
+
+  <!-- ================= JOINTS ================= -->
+
+</robot>
