@@ -5,11 +5,56 @@ from launch.actions import SetEnvironmentVariable, IncludeLaunchDescription, App
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import Command, PathJoinSubstitution
+from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     ros_gz_sim_pkg_path = get_package_share_directory('ros_gz_sim')
     pkg_path = FindPackageShare('rover_arm')
     gz_launch_path = PathJoinSubstitution([ros_gz_sim_pkg_path, 'launch', 'gz_sim.launch.py'])
+    
+    arm_description = ParameterValue(
+        Command(['xacro ', PathJoinSubstitution([pkg_path, 'urdf', 'arm_assembly_simple.urdf'])]),
+        value_type=str,
+    )
+    rover_description = ParameterValue(
+        Command(['xacro ', PathJoinSubstitution([pkg_path, 'urdf', 'rover_drivebase.urdf'])]),
+        value_type=str,
+    )
+
+    rsp_arm = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='rsp_arm',
+        parameters=[{'robot_description': arm_description, 'use_sim_time': True}],
+        remappings=[('robot_description', 'arm_description')],
+        output='screen',
+    )
+
+    rsp_rover = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='rsp_rover',
+        parameters=[{'robot_description': rover_description, 'use_sim_time': True}],
+        remappings=[('robot_description', 'rover_description')],
+        output='screen',
+    )
+
+    spawnArm = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=['-topic', 'arm_description', '-name', 'rover_arm',
+                '-x', '0', '-y', '0', '-z', '0.5'],
+        output='screen',
+    )
+
+    spawnRover = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=['-topic', 'rover_description', '-name', 'rover_drivebase',
+                '-x', '0', '-y', '0', '-z', '0.1'],
+        output='screen',
+    )
 
     return LaunchDescription([
         AppendEnvironmentVariable(
@@ -27,6 +72,11 @@ def generate_launch_description():
                 'on_exit_shutdown': 'True'
             }.items(),
         ),
+        
+        rsp_arm,
+        rsp_rover,
+        spawnArm,
+        spawnRover,
 
         Node(
             package='ros_gz_bridge',
