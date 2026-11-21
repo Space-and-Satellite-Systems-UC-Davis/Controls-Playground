@@ -11,9 +11,22 @@
       "onAutoForward": "notify"
     }
   },
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  "runArgs": [
+    "--device=/dev/dxg",
+    "--network=host",
+    "--ipc=host"
   ],
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=/usr/lib/wsl,target=/usr/lib/wsl,type=bind,ro",
+  ],
+  "containerEnv": {
+    "DISPLAY": ":1",
+    "QT_X11_NO_MITSHM": "1",
+    "LD_LIBRARY_PATH": "/usr/lib/wsl/lib",
+    "GALLIUM_DRIVER": "d3d12",
+    "LIBGL_ALWAYS_SOFTWARE": "0"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,5 +36,5 @@
     }
   },
   "workspaceFolder": "/workspace",
-  "postStartCommand": "start-vnc.sh"
+  "postStartCommand": "tigervncserver -kill :1 > /dev/null 2>&1; rm -f /root/.vnc/*:1.pid; setsid nohup bash -c 'start-vnc.sh' > /tmp/start-vnc.log 2>&1 < /dev/null & for i in $(seq 1 25); do [ -S /tmp/.X11-unix/X1 ] && break; sleep 1; done; DISPLAY=:1 glxinfo -B > /tmp/gpu-renderer.log 2>&1; grep -E 'Device|Accelerated|OpenGL renderer' /tmp/gpu-renderer.log > /tmp/gpu-check.log 2>&1 || true"
 }

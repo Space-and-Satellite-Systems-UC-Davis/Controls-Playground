@@ -69,7 +69,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(gz_launch_path),
             launch_arguments={
                 'gz_args': PathJoinSubstitution([pkg_path, 'sdf/world.sdf']),
-                'on_exit_shutdown': 'True'
+                'on_exit_shutdown': 'False'
             }.items(),
         ),
         
